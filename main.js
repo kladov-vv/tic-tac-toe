@@ -35,16 +35,12 @@ const displayControl = (function() {
         const player2Name = formObject.player2Name;
         
         game.start(player1Name, player2Name);
-        
-        // changeVisibility(content);
-        changeVisibility(gameBoard);
-        changeVisibility(statusBar);
-        playerContainers.forEach((node) => changeVisibility(node));
-        
-         
         displayNames(player1Name, player2Name);
-        
         updateScreen();
+
+        changeVisibility(statusBar);
+        changeVisibility(gameBoard);
+        playerContainers.forEach((node) => changeVisibility(node));
     });
 
     gameBoard.addEventListener('click', (event) => {
@@ -71,14 +67,13 @@ const displayControl = (function() {
         })
     }
 
-    const updateStatusBar = (message) => {
-        statusBar.textContent = message;
-    }
-
     const updateScore = (score1, score2) => {
         player1DisplayedScore.textContent = `Score: ${score1}`;
         player2DisplayedScore.textContent = `Score: ${score2}`;
+    }
 
+    const updateStatusBar = (message) => {
+        statusBar.textContent = message;
     }
 
     const displayNames = (name1, name2) => {
@@ -134,19 +129,22 @@ const game = (function() {
     let player2;
     let openingPlayer;
     let currentPlayer;
-    let turnResult;
+    let turnResult = '';
 
     const start = (player1Name, player2Name) => {
         player1 = createPlayer(player1Name, '\u{2715}');
         player2 = createPlayer(player2Name, '\u{25EF}');
         newRound();
-        turnResult = `${currentPlayer.getName()} (${currentPlayer.getMarker()}), it's your turn!`;
+        // turnResult = `${currentPlayer.getName()} (${currentPlayer.getMarker()}), it's your turn!`;
     }
    
     const newRound = () => {        
+        board.clear();
+
         openingPlayer = (openingPlayer === player1) ? player2 : player1;
         currentPlayer = openingPlayer;
-        board.clear();
+        
+        turnResult = turnResult + `${currentPlayer.getName()} (${currentPlayer.getMarker()}), it's your turn!`;
     }
 
     const getTurnInfo = () => {
@@ -165,7 +163,7 @@ const game = (function() {
 
             if (regex.test(board.getPlayerPositions(currentPlayer))) {
                 currentPlayer.increaseScore();
-                turnResult = `${currentPlayer.getName()} (${currentPlayer.getMarker()}) won!`;
+                turnResult = `${currentPlayer.getName()} (${currentPlayer.getMarker()}) won! `;
                 return true;
             }
         }
@@ -173,7 +171,7 @@ const game = (function() {
 
     const checkDraw = () => {
         if (!board.get().includes('')) {
-            turnResult = 'Draw!';
+            turnResult = 'Draw! ';
             return true;
         }
     }
